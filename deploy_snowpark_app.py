@@ -24,9 +24,14 @@ for (directory_path, directory_names, file_names) in os.walk(root_directory):
     with open(f"{directory_path}/{snowflake_project_config_filename}", "r") as yamlfile:
         project_settings = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
-    if 'snowpark' not in project_settings:
+    # if 'snowpark' not in project_settings:
+    #     print(f"Skipping non Snowpark project in folder {base_name}")
+    #     continue
+
+    if 'handlers' not in project_settings:
         print(f"Skipping non Snowpark project in folder {base_name}")
         continue
+
 
     project_name = project_settings['snowpark'].get('project_name', 'UNKNOWN_PROJECT')
     print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
