@@ -1,18 +1,42 @@
-definition_version: 1.0
+definition_version: 2
+
+project_name: SNOWFLAKE_STUDENT_APP
 
 snowpark:
-  project_name: SNOWFLAKE_STUDENT_APP
-  stage_name: '@student_app_stage'
-  src: app.py
-  handler: main
-  packages:
+  runtime: 1.10
+  handler: app.main
+  dependencies:
     - snowflake-snowpark-python
+
+artifacts:
+  - app.py
+
+stage: student_app_stage
 
 environment:
     database: snowpark_app
     schema: snowparkapp_schema
     warehouse: compute_wh
     role: accountadmin
+
+
+
+
+# definition_version: 1.0
+
+# snowpark:
+#   project_name: SNOWFLAKE_STUDENT_APP
+#   stage_name: '@student_app_stage'
+#   src: app.py
+#   handler: main
+#   packages:
+#     - snowflake-snowpark-python
+
+# environment:
+#     database: snowpark_app
+#     schema: snowparkapp_schema
+#     warehouse: compute_wh
+#     role: accountadmin
 
 
 
