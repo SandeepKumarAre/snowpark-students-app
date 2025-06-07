@@ -1,0 +1,41 @@
+definition_version: 1
+snowpark:
+  project_name: SNOWFLAKE_STUDENT_APP
+
+artifacts:
+  - app.py
+  - requirements.snowflake.txt
+
+packages:
+  - snowflake-snowpark-python
+
+default_environment: dev
+
+environments:
+  dev:
+    database: snowpark_app
+    schema: snowparkapp_schema
+    warehouse: compute_wh
+    role: accountadmin
+
+
+
+
+
+
+# definition_version: 1
+# artifacts:
+#   - app.py
+#   - requirements.txt
+
+# packages:
+#   - snowflake-snowpark-python
+
+# default_environment: dev
+
+# environments:
+#   dev:
+#     database: snowpark_app
+#     schema: snowparkapp_schema
+#     warehouse: compute_wh
+#     role: accountadmin

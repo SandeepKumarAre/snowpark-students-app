@@ -1,0 +1,2 @@
+pyyaml
+snowflake-cli-labs
