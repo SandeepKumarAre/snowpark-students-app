@@ -28,13 +28,17 @@ for (directory_path, directory_names, file_names) in os.walk(root_directory):
     #     print(f"Skipping non Snowpark project in folder {base_name}")
     #     continue
 
+    # Confirm that this is a Snowpark project (Definition v2 check)
     if 'handlers' not in project_settings:
         print(f"Skipping non Snowpark project in folder {base_name}")
         continue
 
-
-    project_name = project_settings['snowpark'].get('project_name', 'UNKNOWN_PROJECT')
+    # Use top-level name instead of deprecated 'snowpark.project_name'
+    project_name = project_settings.get('name', 'UNKNOWN_PROJECT')
     print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
+
+    # project_name = project_settings['snowpark'].get('project_name', 'UNKNOWN_PROJECT')
+    # print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
     print(f"Calling snowcli to deploy the project")
     os.chdir(f"{directory_path}")
     os.system(f"snow snowpark build --temporary-connection --account $SNOWFLAKE_ACCOUNT --user $SNOWFLAKE_USER --role $SNOWFLAKE_ROLE --warehouse $SNOWFLAKE_WAREHOUSE --database $SNOWFLAKE_DATABASE")
