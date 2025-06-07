@@ -1,25 +1,49 @@
-#
+# #
 definition_version: 2
-
-name: SNOWFLAKE_STUDENT_APP
 
 artifacts:
   - app.py
 
-stage: student_app_stage
+execution:
+  handler: app.main
+  runtime: "3.10"
+  packages:
+    - snowflake-snowpark-python
 
-handlers:
-  - type: python
-    handler: app.main
-    runtime: "3.10"
-    packages:
-      - snowflake-snowpark-python
+deployment:
+  stage: student_app_stage
 
-environment:
-  database: snowpark_app
-  schema: snowparkapp_schema
-  warehouse: COMPUTE_WH
-  role: ACCOUNTADMIN
+configuration:
+  default_environment: dev
+  environments:
+    dev:
+      database: snowpark_app
+      schema: snowparkapp_schema
+      warehouse: COMPUTE_WH
+      role: ACCOUNTADMIN
+
+
+# definition_version: 2
+
+# name: SNOWFLAKE_STUDENT_APP
+
+# artifacts:
+#   - app.py
+
+# stage: student_app_stage
+
+# handlers:
+#   - type: python
+#     handler: app.main
+#     runtime: "3.10"
+#     packages:
+#       - snowflake-snowpark-python
+
+# environment:
+#   database: snowpark_app
+#   schema: snowparkapp_schema
+#   warehouse: COMPUTE_WH
+#   role: ACCOUNTADMIN
 
 
 

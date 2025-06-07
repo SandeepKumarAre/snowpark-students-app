@@ -29,12 +29,12 @@ for (directory_path, directory_names, file_names) in os.walk(root_directory):
     #     continue
 
     # Confirm that this is a Snowpark project (Definition v2 check)
-    if 'handlers' not in project_settings:
+    if 'execution' not in project_settings:
         print(f"Skipping non Snowpark project in folder {base_name}")
         continue
 
-    # Use top-level name instead of deprecated 'snowpark.project_name'
-    project_name = project_settings.get('name', 'UNKNOWN_PROJECT')
+    # Use fallback if 'name' is not in v2 schema
+    project_name = project_settings.get('name', base_name)
     print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
 
     # project_name = project_settings['snowpark'].get('project_name', 'UNKNOWN_PROJECT')
