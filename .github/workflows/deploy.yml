@@ -2,7 +2,8 @@ name: Deploy Snowpark App
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -12,25 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install Snowflake CLI and dependencies
+      - name: Install Snowflake CLI
         run: |
-          pip install snowflake-cli-labs
-          snow --version
+          pip install --upgrade snowflake-cli-labs
 
-      - name: Authenticate to Snowflake
-        run: |
-          snow auth login --account ${{ secrets.SNOWFLAKE_ACCOUNT }} \
-                          --user ${{ secrets.SNOWFLAKE_USER }} \
-                          --auth-type password \
-                          --password ${{ secrets.SNOWFLAKE_PASSWORD }}
-
-      - name: Deploy Snowpark App
-        run: python deploy_snowpak_app.py $GITHUB_WORKSPACE
+      - name: Run Snowpark App
+        run: python deploy_snowpark_app.py
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_ROLE: ACCOUNTADMIN
+          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+          SNOWFLAKE_DATABASE: snowpark_app
+          SNOWFLAKE_SCHEMA: snowparkapp_schema
 
 
 

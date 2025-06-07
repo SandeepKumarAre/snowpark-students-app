@@ -8,7 +8,39 @@ for dirpath, dirnames, filenames in os.walk(root_dir):
     if 'snowflake.yml' in filenames:
         print(f"Found Snowflake project in folder {dirpath}")
         os.chdir(dirpath)
-        subprocess.run(["snow", "app", "run"], check=True)
+        subprocess.run(
+            [
+                "snow", "app", "run",
+                "--connection", "user_connection"
+            ],
+            check=True,
+            env={
+                **os.environ,
+                "SNOWFLAKE_ACCOUNT": os.environ.get("SNOWFLAKE_ACCOUNT", "QA88598"),
+                "SNOWFLAKE_USER": os.environ.get("SNOWFLAKE_USER", "sandeep2910"),
+                "SNOWFLAKE_PASSWORD": os.environ.get("SNOWFLAKE_PASSWORD", "Harihara@292707"),
+                "SNOWFLAKE_ROLE": os.environ.get("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
+                "SNOWFLAKE_WAREHOUSE": os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
+                "SNOWFLAKE_DATABASE": os.environ.get("SNOWFLAKE_DATABASE", "snowpark_app"),
+                "SNOWFLAKE_SCHEMA": os.environ.get("SNOWFLAKE_SCHEMA", "snowparkapp_schema"),
+            }
+        )
+
+
+
+
+
+# import os
+# import subprocess
+
+# root_dir = os.environ.get("GITHUB_WORKSPACE", ".")
+# print(f"Deploying all Snowpark apps in root directory {root_dir}")
+
+# for dirpath, dirnames, filenames in os.walk(root_dir):
+#     if 'snowflake.yml' in filenames:
+#         print(f"Found Snowflake project in folder {dirpath}")
+#         os.chdir(dirpath)
+#         subprocess.run(["snow", "app", "run"], check=True)
 
 
 

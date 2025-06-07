@@ -1,15 +1,15 @@
 from snowflake.snowpark import Session
 from snowflake.snowpark.functions import col
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col
 
 def main(session: Session):
-    # Read the source table
     df = session.table("snowpark_app.snowparkapp_schema.students")
-    
-    # Calculate total and percentage
-    df_result = df.with_column("total", col("maths") + col("physics") + col("chemistry") + col("english"))                   .with_column("percentage", ((col("maths") + col("physics") + col("chemistry") + col("english")) / 400) * 100)
-    
-    # Save results to a new table
+    df_result = df.with_column("total", col("maths") + col("physics") + col("chemistry") + col("english")) \
+                  .with_column("percentage", ((col("maths") + col("physics") + col("chemistry") + col("english")) / 400) * 100)
+
     df_result.write.mode("overwrite").save_as_table("snowpark_app.snowparkapp_schema.students_results")
+
 
 
 
