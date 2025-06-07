@@ -1,30 +1,59 @@
 import os
 import subprocess
 
-root_dir = os.environ.get("GITHUB_WORKSPACE", ".")
-print(f"Deploying all Snowpark apps in root directory {root_dir}")
+def find_project_dirs(root_dir):
+    return [os.path.join(root_dir, name) for name in os.listdir(root_dir)
+            if os.path.isdir(os.path.join(root_dir, name)) and os.path.exists(os.path.join(root_dir, name, "snowflake.yml"))]
 
-for dirpath, dirnames, filenames in os.walk(root_dir):
-    if 'snowflake.yml' in filenames:
-        print(f"Found Snowflake project in folder {dirpath}")
-        os.chdir(dirpath)
-        subprocess.run(
-            [
-                "snow", "app", "run",
-                "--connection", "user_connection"
-            ],
-            check=True,
-            env={
-                **os.environ,
-                "SNOWFLAKE_ACCOUNT": os.environ.get("SNOWFLAKE_ACCOUNT", "QA88598"),
-                "SNOWFLAKE_USER": os.environ.get("SNOWFLAKE_USER", "sandeep2910"),
-                "SNOWFLAKE_PASSWORD": os.environ.get("SNOWFLAKE_PASSWORD", "Harihara@292707"),
-                "SNOWFLAKE_ROLE": os.environ.get("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
-                "SNOWFLAKE_WAREHOUSE": os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
-                "SNOWFLAKE_DATABASE": os.environ.get("SNOWFLAKE_DATABASE", "snowpark_app"),
-                "SNOWFLAKE_SCHEMA": os.environ.get("SNOWFLAKE_SCHEMA", "snowparkapp_schema"),
-            }
-        )
+def deploy_all_projects(root_dir):
+    print(f"Deploying all Snowpark apps in root directory {root_dir}")
+    project_dirs = find_project_dirs(root_dir)
+
+    for project_dir in project_dirs:
+        print(f"Found Snowflake project in folder {project_dir}")
+        try:
+            subprocess.run(
+                ["snow", "app", "run", "--connection", "user_connection"],
+                cwd=project_dir,
+                check=True
+            )
+        except subprocess.CalledProcessError as e:
+            print(f"❌ Deployment failed for {project_dir}")
+            raise
+
+if __name__ == "__main__":
+    deploy_all_projects(os.getcwd())
+
+
+
+
+# import os
+# import subprocess
+
+# root_dir = os.environ.get("GITHUB_WORKSPACE", ".")
+# print(f"Deploying all Snowpark apps in root directory {root_dir}")
+
+# for dirpath, dirnames, filenames in os.walk(root_dir):
+#     if 'snowflake.yml' in filenames:
+#         print(f"Found Snowflake project in folder {dirpath}")
+#         os.chdir(dirpath)
+#         subprocess.run(
+#             [
+#                 "snow", "app", "run",
+#                 "--connection", "user_connection"
+#             ],
+#             check=True,
+#             env={
+#                 **os.environ,
+#                 "SNOWFLAKE_ACCOUNT": os.environ.get("SNOWFLAKE_ACCOUNT", "QA88598"),
+#                 "SNOWFLAKE_USER": os.environ.get("SNOWFLAKE_USER", "sandeep2910"),
+#                 "SNOWFLAKE_PASSWORD": os.environ.get("SNOWFLAKE_PASSWORD", "Harihara@292707"),
+#                 "SNOWFLAKE_ROLE": os.environ.get("SNOWFLAKE_ROLE", "ACCOUNTADMIN"),
+#                 "SNOWFLAKE_WAREHOUSE": os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
+#                 "SNOWFLAKE_DATABASE": os.environ.get("SNOWFLAKE_DATABASE", "snowpark_app"),
+#                 "SNOWFLAKE_SCHEMA": os.environ.get("SNOWFLAKE_SCHEMA", "snowparkapp_schema"),
+#             }
+#         )
 
 
 
