@@ -42,7 +42,9 @@ for (directory_path, directory_names, file_names) in os.walk(root_directory):
         continue
 
     # Finally deploy the Snowpark project with the snowcli tool
-    print(f"Found Snowflake Snowpark project '{project_settings['snowpark']['project_name']}' in folder {base_name}")
+    #print(f"Found Snowflake Snowpark project '{project_settings['snowpark']['project_name']}' in folder {base_name}")
+    project_name = project_settings.get('project_name', 'UNKNOWN_PROJECT')
+    print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
     print(f"Calling snowcli to deploy the project")
     os.chdir(f"{directory_path}")
     # Make sure all 6 SNOWFLAKE_ environment variables are set
