@@ -1,17 +1,14 @@
 # #
 definition_version: 2
 
-artifacts:
-  - app.py
-
-execution:
+snowpark:
+  name: student_marks
+  runtime: 1.10
   handler: app.main
-  runtime: "3.10"
-  packages:
+  dependencies:
     - snowflake-snowpark-python
 
-deployment:
-  stage: student_app_stage
+stage: student_app_stage
 
 configuration:
   default_environment: dev
@@ -19,8 +16,32 @@ configuration:
     dev:
       database: snowpark_app
       schema: snowparkapp_schema
-      warehouse: COMPUTE_WH
-      role: ACCOUNTADMIN
+      warehouse: compute_wh
+      role: accountadmin
+
+
+# definition_version: 2
+
+# artifacts:
+#   - app.py
+
+# execution:
+#   handler: app.main
+#   runtime: "3.10"
+#   packages:
+#     - snowflake-snowpark-python
+
+# deployment:
+#   stage: student_app_stage
+
+# configuration:
+#   default_environment: dev
+#   environments:
+#     dev:
+#       database: snowpark_app
+#       schema: snowparkapp_schema
+#       warehouse: COMPUTE_WH
+#       role: ACCOUNTADMIN
 
 
 # definition_version: 2

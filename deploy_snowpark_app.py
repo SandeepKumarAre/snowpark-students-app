@@ -1,48 +1,63 @@
-import sys
 import os
-import yaml
+import subprocess
 
-ignore_folders = ['.git', '__pycache__', '.ipynb_checkpoints']
-snowflake_project_config_filename = 'snowflake.yml'
+root_dir = os.environ.get("GITHUB_WORKSPACE", ".")
+print(f"Deploying all Snowpark apps in root directory {root_dir}")
 
-if len(sys.argv) != 2:
-    print("Root directory is required")
-    exit()
+for dirpath, dirnames, filenames in os.walk(root_dir):
+    if 'snowflake.yml' in filenames:
+        print(f"Found Snowflake project in folder {dirpath}")
+        os.chdir(dirpath)
+        subprocess.run(["snow", "app", "run"], check=True)
 
-root_directory = sys.argv[1]
-print(f"Deploying all Snowpark apps in root directory {root_directory}")
 
-for (directory_path, directory_names, file_names) in os.walk(root_directory):
-    base_name = os.path.basename(directory_path)
-    if base_name in ignore_folders:
-        continue
-    if snowflake_project_config_filename not in file_names:
-        continue
 
-    print(f"Found Snowflake project in folder {directory_path}")
 
-    with open(f"{directory_path}/{snowflake_project_config_filename}", "r") as yamlfile:
-        project_settings = yaml.load(yamlfile, Loader=yaml.FullLoader)
+# import sys
+# import os
+# import yaml
 
-    # if 'snowpark' not in project_settings:
-    #     print(f"Skipping non Snowpark project in folder {base_name}")
-    #     continue
+# ignore_folders = ['.git', '__pycache__', '.ipynb_checkpoints']
+# snowflake_project_config_filename = 'snowflake.yml'
 
-    # Confirm that this is a Snowpark project (Definition v2 check)
-    if 'execution' not in project_settings:
-        print(f"Skipping non Snowpark project in folder {base_name}")
-        continue
+# if len(sys.argv) != 2:
+#     print("Root directory is required")
+#     exit()
 
-    # Use fallback if 'name' is not in v2 schema
-    project_name = project_settings.get('name', base_name)
-    print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
+# root_directory = sys.argv[1]
+# print(f"Deploying all Snowpark apps in root directory {root_directory}")
 
-    # project_name = project_settings['snowpark'].get('project_name', 'UNKNOWN_PROJECT')
-    # print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
-    print(f"Calling snowcli to deploy the project")
-    os.chdir(f"{directory_path}")
-    os.system(f"snow snowpark build --temporary-connection --account $SNOWFLAKE_ACCOUNT --user $SNOWFLAKE_USER --role $SNOWFLAKE_ROLE --warehouse $SNOWFLAKE_WAREHOUSE --database $SNOWFLAKE_DATABASE")
-    os.system(f"snow snowpark deploy --replace --temporary-connection --account $SNOWFLAKE_ACCOUNT --user $SNOWFLAKE_USER --role $SNOWFLAKE_ROLE --warehouse $SNOWFLAKE_WAREHOUSE --database $SNOWFLAKE_DATABASE")
+# for (directory_path, directory_names, file_names) in os.walk(root_directory):
+#     base_name = os.path.basename(directory_path)
+#     if base_name in ignore_folders:
+#         continue
+#     if snowflake_project_config_filename not in file_names:
+#         continue
+
+#     print(f"Found Snowflake project in folder {directory_path}")
+
+#     with open(f"{directory_path}/{snowflake_project_config_filename}", "r") as yamlfile:
+#         project_settings = yaml.load(yamlfile, Loader=yaml.FullLoader)
+
+#     # if 'snowpark' not in project_settings:
+#     #     print(f"Skipping non Snowpark project in folder {base_name}")
+#     #     continue
+
+#     # Confirm that this is a Snowpark project (Definition v2 check)
+#     if 'execution' not in project_settings:
+#         print(f"Skipping non Snowpark project in folder {base_name}")
+#         continue
+
+#     # Use fallback if 'name' is not in v2 schema
+#     project_name = project_settings.get('name', base_name)
+#     print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
+
+#     # project_name = project_settings['snowpark'].get('project_name', 'UNKNOWN_PROJECT')
+#     # print(f"Found Snowflake Snowpark project '{project_name}' in folder {base_name}")
+#     print(f"Calling snowcli to deploy the project")
+#     os.chdir(f"{directory_path}")
+#     os.system(f"snow snowpark build --temporary-connection --account $SNOWFLAKE_ACCOUNT --user $SNOWFLAKE_USER --role $SNOWFLAKE_ROLE --warehouse $SNOWFLAKE_WAREHOUSE --database $SNOWFLAKE_DATABASE")
+#     os.system(f"snow snowpark deploy --replace --temporary-connection --account $SNOWFLAKE_ACCOUNT --user $SNOWFLAKE_USER --role $SNOWFLAKE_ROLE --warehouse $SNOWFLAKE_WAREHOUSE --database $SNOWFLAKE_DATABASE")
 
 
 
