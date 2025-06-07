@@ -10,32 +10,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
       - name: Install Snowflake CLI
+        run: pip install snowflake-cli-labs
+
+      - name: Authenticate Snowflake
         run: |
-          pip install --upgrade snowflake-cli-labs
+          snow config init
+          snow connection add --connection student_conn --account ${{ secrets.SNOW_ACCOUNT }} --user ${{ secrets.SNOW_USER }} --password ${{ secrets.SNOW_PASSWORD }} --role ACCOUNTADMIN --database snowpark_app --schema snowparkapp_schema --warehouse COMPUTE_WH
+          snow connection use student_conn
 
-      - name: Set up Snowflake CLI
-        run: |
-          pip install snowflake-cli-labs
-          snow connection add user_connection \
-            --account ${{ secrets.SNOWFLAKE_ACCOUNT }} \
-            --username ${{ secrets.SNOWFLAKE_USERNAME }} \
-            --password ${{ secrets.SNOWFLAKE_PASSWORD }}
-
-      - name: Run Snowpark App
-        run: python deploy_snowpark_app.py
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_ROLE: ACCOUNTADMIN
-          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
-          SNOWFLAKE_DATABASE: snowpark_app
-          SNOWFLAKE_SCHEMA: snowparkapp_schema
-
+      - name: Deploy Snowpark App
+        run: python deploy_snowpark_app.py $GITHUB_WORKSPACE
 
 
 # name: Deploy Snowpark Apps
